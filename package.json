@@ -1,7 +1,7 @@
 {
   "name": "arberich",
   "version": "1.0.0",
-  "description": "A criptocurrency arbitrage opportunity application",
+  "description": "A cryptocurrency arbitrage opportunity application",
   "author": "Youngjoo Kim <jerry88.kim@gmail.com>",
   "private": true,
   "scripts": {
@@ -14,9 +14,13 @@
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs"
   },
   "dependencies": {
+    "axios": "^0.18.0",
+    "cors": "^2.8.4",
     "vue": "^2.5.16",
     "vue-router": "^3.0.1",
-    "vuetify": "^1.0.19"
+    "vue2-filters": "^0.3.0",
+    "vuetify": "^1.0.19",
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.5",

@@ -37,5 +37,10 @@ module.exports = merge(baseWebpackConfig, {
         './service-worker-dev.js'), 'utf-8')}</script>`
     }),
     new FriendlyErrorsPlugin()
-  ]
-})
+  ],
+  devServer: {
+    headers: {
+      'Access-Control-Allow-Origin': '*'
+    }
+  }
+});
