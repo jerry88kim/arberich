@@ -1,6 +1,6 @@
 # arberich
 
-> A criptocurrency arbitrage opportunity application
+> A cryptocurrency arbitrage opportunity application
 
 ## Build Setup
 
