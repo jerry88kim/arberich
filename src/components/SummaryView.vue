@@ -58,7 +58,7 @@ export default {
   created() {
     setInterval(() => {
       this.$store.dispatch('requestSortedCoinsData');
-    }, 2000);
+    }, 5000);
   }
 };
 </script>
