@@ -40,6 +40,8 @@ COIN_KINDS.forEach(value => {
   coins[value] = {
     id: value,
     name: value.toUpperCase(),
+    // favorite coin or not (false: default)
+    favorite: false,
     exchanges: {
       // korbit: { id: 'korbit', name: 'Korbit', last: 0 },
       bitthumb: { id: 'bitthumb', name: 'Bitthumb', last: 0 },
@@ -172,7 +174,10 @@ const actions = {
       dispatch('requestUpbitData')
       // dispatch('requestGopaxData'),
       // dispatch('requestCoinnestData')
-    ]).then(() => commit('setSortedCoinsData'));
+    ]).then(() => {
+      commit('setSortedCoinsData');
+      commit('sortSortedCoins');
+    });
   }
 };
 
@@ -246,14 +251,18 @@ const mutations = {
       state.sortedCoins.push({
         id: state.coins[coinName].id,
         name: state.coins[coinName].name,
+        favorite: state.coins[coinName].favorite,
         lowestExchange,
         highestExchange,
         maxDiff: getMaxDiff(lowestExchange.last, highestExchange.last)
       });
     });
-
-    // Sort sortedCoins with descending order
-    state.sortedCoins.sort((a, b) => b.maxDiff - a.maxDiff);
+  },
+  sortSortedCoins(state) {
+    // Sort sortedCoins having favorite priority with descending order
+    state.sortedCoins.sort(
+      (a, b) => b.favorite - a.favorite || b.maxDiff - a.maxDiff
+    );
   }
 };
 

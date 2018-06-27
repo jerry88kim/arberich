@@ -4,13 +4,28 @@
     style="max-width: 600px; margin: auto;"
     class="grey lighten-3"
   >
-    <v-container
-      fluid
-      style="min-height: 0;"
-      grid-list-lg
-    >
+    <v-container fluid grid-list-lg>
       <v-layout row wrap>
-        <v-flex v-for="coin in coins" :key="coin.id" xs12>
+        <!-- Favorite coins setting menu -->            
+        <v-menu open-on-hover offset-x>
+          <v-btn slot="activator" dark fab small color="pink">
+            <v-icon dark>favorite</v-icon>
+          </v-btn>
+
+          <v-list>
+            <v-list-tile v-for="coin in coins" :key="coin.id">
+              <v-list-tile-action>
+                <v-checkbox v-model="coin.favorite" @click="handleFavoriteCheck"></v-checkbox>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>{{ coin.name }}</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </v-list>
+        </v-menu>
+
+        <!-- Each coin info -->
+        <v-flex v-for="coin in sortedCoins" :key="coin.id" xs12>
           <v-card color="white" class="black--text">
             <v-container fluid grid-list-xl>
               <v-layout row justify-space-between>
@@ -21,6 +36,7 @@
                   <div class="title">{{ coin.maxDiff | percentage(coin.maxDiff) }}</div>
                 </v-flex> 
               </v-layout>
+              
               <v-layout row>
                 <v-flex xs6>
                   <v-card color="blue" class="white--text pl-2">
@@ -29,13 +45,13 @@
                     <div class="body2">{{ coin.lowestExchange.last | currency('₩', 0) }}</div>
                   </v-card>
                 </v-flex>
+                
                 <v-flex xs6>
                   <v-card color="red lighten-1" class="white--text pl-2">
                     <div class="caption">Highest</div>
                     <div class="title">{{ coin.highestExchange.name }}</div>
                     <div class="body2">{{ coin.highestExchange.last | currency('₩', 0) }}</div>
-                  </v-card>
-                  
+                  </v-card>                  
                 </v-flex>
               </v-layout>
             </v-container>
@@ -52,8 +68,15 @@ export default {
   name: 'summary-view',
   computed: {
     ...mapGetters({
-      coins: 'getSortedCoins'
+      coins: 'getCoins',
+      sortedCoins: 'getSortedCoins'
     })
+  },
+  methods: {
+    handleFavoriteCheck() {
+      // update sortedCoins for favorite coins immediately
+      this.$store.commit('sortSortedCoins');
+    }
   },
   created() {
     setInterval(() => {
