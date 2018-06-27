@@ -41,7 +41,8 @@ COIN_KINDS.forEach(value => {
     id: value,
     name: value.toUpperCase(),
     // favorite coin or not (false: default)
-    favorite: false,
+    // Get favorite coin info from cache if it exists.
+    favorite: localStorage.getItem(`favorite-${value}`) === 'true' || false,
     exchanges: {
       // korbit: { id: 'korbit', name: 'Korbit', last: 0 },
       bitthumb: { id: 'bitthumb', name: 'Bitthumb', last: 0 },

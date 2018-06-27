@@ -13,9 +13,9 @@
           </v-btn>
 
           <v-list>
-            <v-list-tile v-for="coin in coins" :key="coin.id">
+            <v-list-tile v-for="coin in coins" :key="coin.id"  @click="handleFavoriteCheck(coin)">
               <v-list-tile-action>
-                <v-checkbox v-model="coin.favorite" @click="handleFavoriteCheck"></v-checkbox>
+                <v-checkbox v-model="coin.favorite"></v-checkbox>
               </v-list-tile-action>
               <v-list-tile-content>
                 <v-list-tile-title>{{ coin.name }}</v-list-tile-title>
@@ -73,8 +73,9 @@ export default {
     })
   },
   methods: {
-    handleFavoriteCheck() {
+    handleFavoriteCheck(coin) {
       // update sortedCoins for favorite coins immediately
+      localStorage.setItem(`favorite-${coin.id}`, coin.favorite);
       this.$store.commit('sortSortedCoins');
     }
   },
