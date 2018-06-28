@@ -33,7 +33,7 @@
                   <div class="headline">{{ coin.name }}</div>
                 </v-flex>
                 <v-flex xs3 class="text-xs-right pr-3">
-                  <div class="title">{{ coin.maxDiff | percentage(coin.maxDiff) }}</div>
+                  <div class="title">{{ coin.maxDiff | percentage }}</div>
                 </v-flex> 
               </v-layout>
               
@@ -42,7 +42,7 @@
                   <v-card color="blue" class="white--text pl-2">
                     <div class="caption">Lowest</div>
                     <div class="title">{{ coin.lowestExchange.name }}</div>
-                    <div class="body2">{{ coin.lowestExchange.last | currency('₩', 0) }}</div>
+                    <div class="body2">{{ coin.lowestExchange.last | currency }}</div>
                   </v-card>
                 </v-flex>
                 
@@ -50,7 +50,7 @@
                   <v-card color="red lighten-1" class="white--text pl-2">
                     <div class="caption">Highest</div>
                     <div class="title">{{ coin.highestExchange.name }}</div>
-                    <div class="body2">{{ coin.highestExchange.last | currency('₩', 0) }}</div>
+                    <div class="body2">{{ coin.highestExchange.last | currency }}</div>
                   </v-card>                  
                 </v-flex>
               </v-layout>
@@ -74,8 +74,9 @@ export default {
   },
   methods: {
     handleFavoriteCheck(coin) {
-      // update sortedCoins for favorite coins immediately
+      // Save favorite coin info into cache
       localStorage.setItem(`favorite-${coin.id}`, coin.favorite);
+      // update sortedCoins for favorite coins immediately
       this.$store.commit('sortSortedCoins');
     }
   },
