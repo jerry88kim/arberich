@@ -30,7 +30,10 @@
             <v-container fluid grid-list-xl>
               <v-layout row justify-space-between>
                 <v-flex xs5 class="text-xs-left pl-3">
-                  <div class="headline">{{ coin.name }}</div>
+                  <v-badge v-model="coin.favorite" color="pink" left>
+                    <v-icon slot="badge" dark small>favorite</v-icon>
+                    <div class="headline">{{ coin.name }}</div>
+                  </v-badge>
                 </v-flex>
                 <v-flex xs3 class="text-xs-right pr-3">
                   <div class="title">{{ coin.maxDiff | percentage(2) }}</div>

@@ -1,12 +1,8 @@
 <template>
   <div>
-    <v-toolbar color="cyan" dark tabs>
-      <v-toolbar-side-icon></v-toolbar-side-icon>
+    <v-toolbar color="cyan" dark tabs centered>
       <v-toolbar-title>ArBeRich</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon>
-        <v-icon>more_vert</v-icon>
-      </v-btn>
       <v-tabs
         slot="extension"
         centered
