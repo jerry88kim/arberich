@@ -20,10 +20,14 @@ Vue.filter('currency', value => {
   return `₩${resultValue}`;
 });
 
-Vue.filter('percentage', value => {
-  const resultValue = value ? value * 100 : 0;
+Vue.filter('percentage', (value, fixed, isPercent = false) => {
+  let resultValue = value || 0;
 
-  return `${resultValue.toFixed(2)}%`;
+  if (!isPercent) {
+    resultValue *= 100;
+  }
+
+  return `${Number.parseFloat(resultValue).toFixed(fixed)}%`;
 });
 
 /* eslint-disable no-new */

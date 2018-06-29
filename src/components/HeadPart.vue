@@ -52,6 +52,11 @@ export default {
       this.model = tabId;
       this.$router.push({ name: tabId, path: `/${tabId}` });
     }
+  },
+  created() {
+    setInterval(() => {
+      this.$store.dispatch('requestSortedCoinsData');
+    }, 5000);
   }
 };
 </script>

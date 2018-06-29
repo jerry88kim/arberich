@@ -33,7 +33,7 @@
                   <div class="headline">{{ coin.name }}</div>
                 </v-flex>
                 <v-flex xs3 class="text-xs-right pr-3">
-                  <div class="title">{{ coin.maxDiff | percentage }}</div>
+                  <div class="title">{{ coin.maxDiff | percentage(2) }}</div>
                 </v-flex> 
               </v-layout>
               
@@ -79,11 +79,6 @@ export default {
       // update sortedCoins for favorite coins immediately
       this.$store.commit('sortSortedCoins');
     }
-  },
-  created() {
-    setInterval(() => {
-      this.$store.dispatch('requestSortedCoinsData');
-    }, 5000);
   }
 };
 </script>

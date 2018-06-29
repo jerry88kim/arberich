@@ -1,26 +1,39 @@
 import Vuex from 'vuex';
 import Vue from 'vue';
+import {
+  COIN_KINDS,
+  EXCHANGES,
+  BITTHUMB_REQUEST_ADDR,
+  BITTHUMB_COIN_MAP,
+  COINONE_REQUEST_ADDR,
+  COINONE_COIN_MAP,
+  UPBIT_REQUEST_ADDR
+} from './constant';
 
 Vue.use(Vuex);
-
-const COIN_KINDS = ['btc', 'etc', 'eth', 'xrp'];
-
-const BITTHUMB_REQUEST_ADDR = 'https://api.bithumb.com/public/ticker/ALL';
-const BITTHUMB_COIN_MAP = {};
-
-const COINONE_REQUEST_ADDR = 'https://api.coinone.co.kr/ticker/?currency=all';
-const COINONE_COIN_MAP = {};
-
-const UPBIT_REQUEST_ADDR = `https://api.upbit.com/v1/ticker?markets=${COIN_KINDS.map(
-  value => `KRW-${value.toUpperCase()}`
-).toString()}`;
-const UPBIT_COIN_MAP = {};
 
 const coins = {};
 COIN_KINDS.forEach(value => {
   BITTHUMB_COIN_MAP[value] = value.toUpperCase();
   COINONE_COIN_MAP[value] = value;
-  UPBIT_COIN_MAP[value] = `KRW-${value.toUpperCase()}`;
+
+  const exchanges = {};
+  EXCHANGES.forEach(exchangeName => {
+    exchanges[exchangeName] = {
+      id: exchangeName,
+      name: exchangeName.charAt(0).toUpperCase() + exchangeName.substring(1),
+      // last price
+      last: 0,
+      // lowest price within 24h
+      low: 0,
+      // highest price within 24h
+      high: 0,
+      // change rate within 24h
+      changeRate: 0,
+      // volume within 24h
+      volume: 0
+    };
+  });
 
   coins[value] = {
     id: value,
@@ -28,11 +41,7 @@ COIN_KINDS.forEach(value => {
     // favorite coin or not (false: default)
     // Get favorite coin info from cache if it exists.
     favorite: localStorage.getItem(`favorite-${value}`) === 'true' || false,
-    exchanges: {
-      bitthumb: { id: 'bitthumb', name: 'Bitthumb', last: 0 },
-      coinone: { id: 'coinone', name: 'Coinone', last: 0 },
-      upbit: { id: 'upbit', name: 'Upbit', last: 0 }
-    }
+    exchanges
   };
 });
 
@@ -50,27 +59,36 @@ const getters = {
 
 const actions = {
   requestBitthumbData({ commit }) {
-    return new Promise(resolve => {
-      Vue.$http.get(BITTHUMB_REQUEST_ADDR).then(response => {
-        commit('setBitthumbData', response.data.data);
-        resolve();
-      });
+    return new Promise((resolve, reject) => {
+      Vue.$http
+        .get(BITTHUMB_REQUEST_ADDR)
+        .then(response => {
+          commit('setBitthumbData', response.data.data);
+          resolve();
+        })
+        .catch(() => reject());
     });
   },
   requestCoinoneData({ commit }) {
-    return new Promise(resolve => {
-      Vue.$http.get(COINONE_REQUEST_ADDR).then(response => {
-        commit('setCoinoneData', response.data);
-        resolve();
-      });
+    return new Promise((resolve, reject) => {
+      Vue.$http
+        .get(COINONE_REQUEST_ADDR)
+        .then(response => {
+          commit('setCoinoneData', response.data);
+          resolve();
+        })
+        .catch(() => reject());
     });
   },
   requestUpbitData({ commit }) {
-    return new Promise(resolve => {
-      Vue.$http.get(UPBIT_REQUEST_ADDR).then(response => {
-        commit('setUpbitData', response.data);
-        resolve();
-      });
+    return new Promise((resolve, reject) => {
+      Vue.$http
+        .get(UPBIT_REQUEST_ADDR)
+        .then(response => {
+          commit('setUpbitData', response.data);
+          resolve();
+        })
+        .catch(() => reject());
     });
   },
   requestSortedCoinsData({ dispatch, commit }) {
@@ -85,32 +103,80 @@ const actions = {
   }
 };
 
+/**
+ * Set exchange's info
+ *
+ * @param {Object} exchange Exchange
+ * @param {string} last Last price
+ * @param {string} low Lowest price within 24h
+ * @param {string} high Highest price within 24h
+ * @param {string} volume Volume within 24h
+ * @param {string} [changeRate] Change rate within 24h
+ */
+function setExchangeData(exchange, last, low, high, volume, changeRate) {
+  exchange.last = parseInt(last, 10);
+  exchange.low = parseInt(low, 10);
+  exchange.high = parseInt(high, 10);
+
+  exchange.volume = parseFloat(volume);
+  exchange.changeRate = parseFloat(changeRate);
+}
+
 const mutations = {
   setBitthumbData(state, data) {
     Object.keys(BITTHUMB_COIN_MAP).forEach(coinName => {
-      state.coins[coinName].exchanges.bitthumb.last = parseInt(
-        data[BITTHUMB_COIN_MAP[coinName]].closing_price,
-        10
+      const bitthumbData = data[BITTHUMB_COIN_MAP[coinName]];
+
+      setExchangeData(
+        state.coins[coinName].exchanges.bitthumb,
+        bitthumbData.closing_price,
+        bitthumbData.min_price,
+        bitthumbData.max_price,
+        bitthumbData.units_traded,
+        bitthumbData['24H_fluctate_rate']
       );
     });
   },
   setCoinoneData(state, data) {
     Object.keys(COINONE_COIN_MAP).forEach(coinName => {
-      state.coins[coinName].exchanges.coinone.last = parseInt(
-        data[COINONE_COIN_MAP[coinName]].last,
-        10
+      const coinoneData = data[COINONE_COIN_MAP[coinName]];
+
+      // (TICKER: last - TICKER: yesterday_last) x 100 / yesterday_last
+      const changeRate =
+        ((coinoneData.last - coinoneData.yesterday_last) * 100) /
+        coinoneData.yesterday_last;
+
+      setExchangeData(
+        state.coins[coinName].exchanges.coinone,
+        coinoneData.last,
+        coinoneData.low,
+        coinoneData.high,
+        coinoneData.volume,
+        changeRate
       );
     });
   },
   setUpbitData(state, data) {
     COIN_KINDS.forEach((coinName, index) => {
-      state.coins[coinName].exchanges.upbit.last = parseInt(
-        data[index].prev_closing_price,
-        10
+      const upbitData = data[index];
+
+      setExchangeData(
+        state.coins[coinName].exchanges.upbit,
+        upbitData.prev_closing_price,
+        upbitData.low_price,
+        upbitData.high_price,
+        upbitData.acc_trade_volume_24h,
+        upbitData.signed_change_rate
       );
     });
   },
   setSortedCoinsData(state) {
+    /**
+     * Get lowest exchange & highest exchange
+     *
+     * @param {Object} exchanges All exchange object
+     * @returns {Object}
+     */
     function getLowestHighestExchange(exchanges) {
       let lowest = Number.MAX_SAFE_INTEGER;
       let highest = Number.MIN_SAFE_INTEGER;
@@ -139,6 +205,12 @@ const mutations = {
       };
     }
 
+    /**
+     * Calculate maximum diff between each exchange's last price
+     * @param {number} lowest Lowest last price
+     * @param {number} highest Highest last price
+     * @returns {number}
+     */
     function getMaxDiff(lowest, highest) {
       return (highest - lowest) / (highest + lowest);
     }
