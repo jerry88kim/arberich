@@ -1,14 +1,14 @@
 <template>
   <div
     id="e3"
-    style="max-width: 600px; margin: auto;"
+    style="max-width: 1000px; margin: auto;"
     class="grey lighten-3"
   >
     <v-container fluid grid-list-lg>
       <v-layout row wrap>
         <!-- Favorite coins setting menu -->            
         <v-menu open-on-hover offset-x>
-          <v-btn slot="activator" dark fab small color="pink">
+          <v-btn slot="activator" dark fab color="pink" fixed bottom left>
             <v-icon dark>favorite</v-icon>
           </v-btn>
 
