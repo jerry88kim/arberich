@@ -16,6 +16,12 @@ Details tab shows more details about each exchange's following info by coin:
 - Lowest price within 24h
 - Volumes within 24h
 
+Currently supported exchanges are as follows:
+
+- [Upbit](https://upbit.com/)
+- [Bitthumb](https://www.bithumb.com/)
+- [Coinone](https://coinone.co.kr/)
+
 ## Build Setup
 
 ```bash
