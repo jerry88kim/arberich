@@ -2,6 +2,20 @@
 
 > A cryptocurrency arbitrage opportunity application
 
+## Introduction
+
+ArBeRich (ArBitragE Rich) is a web application to give opportunity of cryptocurrency arbitrage in Korea exchanges.
+
+Summary tab shows each coin's maximum price difference info among several Korea exchanges. You can set favorite coin to see its info first.
+
+Details tab shows more details about each exchange's following info by coin:
+
+- Last trade price
+- Change rate within 24h
+- Highest price within 24h
+- Lowest price within 24h
+- Volumes within 24h
+
 ## Build Setup
 
 ```bash
